@@ -1,0 +1,14 @@
+authentication app:
+-user
+-domain
+-speciality
+-experience
+-region
+
+appointement app:
+-appointement
+-avis
+-notification
+
+
+Dependency injection (facultative)

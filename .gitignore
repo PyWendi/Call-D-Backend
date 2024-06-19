@@ -18,7 +18,7 @@ media/*/*/*
 
 # Include the media folder itself
 !media/
-
+.todo
 
 # Backup files #
 *.bak

@@ -30,7 +30,7 @@ INSTALLED_APPS = [
 
     # All app services
     "applications.authentication",
-    # "applications.product",
+    "applications.appointement",
     # "applications.purchase",
 ]
 
