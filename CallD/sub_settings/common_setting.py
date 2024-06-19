@@ -30,7 +30,7 @@ INSTALLED_APPS = [
 
     # All app services
     "applications.authentication",
-    "applications.appointement",
+    "applications.appointment",
     # "applications.purchase",
 ]
 
@@ -154,7 +154,7 @@ USE_I18N = True
 
 USE_TZ = True
 # Custom user model referenced inside setting
-# AUTH_USER_MODEL = "authentication.CustomUser"
+AUTH_USER_MODEL = "authentication.CustomUser"
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'

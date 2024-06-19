@@ -1,14 +1,14 @@
 authentication app:
--user
--domain
--speciality
--experience
--region
+-user *
+-region *
+-domain *
+-speciality *
+-experience *
 
-appointement app:
--appointement
--avis
--notification
+appointment app:
+-appointment *
+-avis *
+-notification *
 
 
 Dependency injection (facultative)
