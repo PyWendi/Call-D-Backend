@@ -11,9 +11,11 @@ class Appointment(models.Model):
 
     isConfirmed = models.BooleanField(default=False)
     isArchived = models.BooleanField(default=False)
+    isValid = models.BooleanField(default=True)
 
     speciality = models.ForeignKey(Speciality, on_delete=models.SET_NULL, null=True)  # Foreign key to speciality
     lawyer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # Foreign to custom user (avocat)
+
     client_id = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 

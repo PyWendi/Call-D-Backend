@@ -14,10 +14,10 @@ appointment app:
 Dependency injection (facultative)
 
 --MAIN FLOW--
-1) CLIENT: ask for rendez-vous (with notif)
-2) LAWYER: confirm the date of rendez-vous (with notif)
+1) CLIENT: ask for rendez-vous (with notif) | APPOINTEMENT
+2) LAWYER: confirm the date of rendez-vous (with notif) | UPDATE APPOINTEMENT
 3) alternative
-    a) CLIENT: Cancel the rendez-vous (with notif)
+    a) CLIENT: Cancel the rendez-vous (with notif) | UPDATE APPOINTEMENT
 
     b) LAWYER: Archive the rendez-vous
        CLIENT: Give notice
