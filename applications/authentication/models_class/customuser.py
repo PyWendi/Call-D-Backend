@@ -6,11 +6,14 @@ from applications.authentication.models_class.domain import Domain
 from applications.authentication.models_class.manager import CustomUserManager
 from applications.authentication.models_class.region import Region
 
+
 def upload_to(instance, filename):
     return "profile_images/" + filename
 
+
 def upload_cv_to(instance, filename):
-    return "cv_storage/"+ filename
+    return "cv_storage/" + filename
+
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50)
@@ -22,8 +25,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profile_img = models.ImageField(upload_to=upload_to, blank=True, null=True)
     cv_file = models.FileField(upload_to=upload_cv_to, blank=True, null=True)
     availability = models.TextField(null=True, blank=True)
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True) #relationship
-    domains = models.ManyToManyField(Domain) #relationship
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True) # relationship
+    domains = models.ManyToManyField(Domain) # relationship
 
     date_joined = models.DateTimeField(auto_now_add=True, editable=True)
     is_active = models.BooleanField(default=True)
