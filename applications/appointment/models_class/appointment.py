@@ -7,7 +7,7 @@ class Appointment(models.Model):
     title = models.CharField(max_length=50, blank=True)
     description = models.TextField(blank=True)
     message = models.TextField(null=True, blank=True)  # Filled during confirmation by the lawyer
-    date = models.DateTimeField(blank=False)
+    date = models.DateTimeField(null=True, blank=True)
 
     isConfirmed = models.BooleanField(default=False)
     isArchived = models.BooleanField(default=False)
