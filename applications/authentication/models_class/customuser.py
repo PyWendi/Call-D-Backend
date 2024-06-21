@@ -19,6 +19,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15, null=True)
     password = models.CharField(max_length=128)
     isClient = models.BooleanField(default=False)
     location = models.CharField(max_length=200, null=True, blank=True)
@@ -26,7 +27,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     cv_file = models.FileField(upload_to=upload_cv_to, blank=True, null=True)
     availability = models.TextField(null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True) # relationship
-    domains = models.ManyToManyField(Domain) # relationship
+    domains = models.ManyToManyField(Domain, null=True) # relationship
 
     date_joined = models.DateTimeField(auto_now_add=True, editable=True)
     is_active = models.BooleanField(default=True)

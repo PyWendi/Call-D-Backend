@@ -1,6 +1,8 @@
 from .commonImport import *
 from ..serialisers_class.userSerializer import LawyerSerialiser, ProfileImageSerializer, CvSerializer
 from ..serialisers_class.experienceSerializer import ExperienceSerializer
+from django.contrib.auth.hashers import make_password
+from ..models import Domain, Region
 
 
 class LawyerViewSet(viewsets.ModelViewSet):
@@ -25,6 +27,44 @@ class LawyerViewSet(viewsets.ModelViewSet):
         else:
             return [JWTAuthentication()]
         # return super(UserViewSet, self).get_authenticators()
+
+    @swagger_auto_schema(
+        request_body=LawyerSerialiser,
+        responses={201: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    def create(self, request, *args, **kwargs):
+        domains = Domain.objects.filter(id__in=request.data.pop("domains"))
+        region = Region.objects.get(pk=request.data.pop("region"))
+        password = make_password(request.data.pop("password"))
+        new_user = get_user_model().objects.create(**request.data, password=password, region=region)
+        for domain in domains:
+            new_user.domains.add(domain)
+        new_user.save()
+        # print(f"\nHere is the domain objects :\n {domain}\n")
+        print(new_user)
+        serializer = LawyerSerialiser(new_user, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @swagger_auto_schema(
+        request_body=LawyerSerialiser,
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    def update(self, request, pk, *args, **kwargs):
+        user = get_object_or_404(get_user_model(), pk=pk)
+        user.first_name = request.data.get("first_name")
+        user.last_name = request.data.get("last_name")
+        user.phone = request.data.get("phone")
+        user.email = request.data.get("email")
+        user.location = request.data.get("location")
+        user.region = Region.objects.get(pk=request.data.pop("region"))
+        user.domains.clear()
+        domains = Domain.objects.filter(id__in=request.data.pop("domains"))
+        for domain in domains:
+            user.domains.add(domain)
+        user.save()
+        serializer = LawyerSerialiser(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     @swagger_auto_schema(
         methods=["PUT"],
@@ -65,11 +105,10 @@ class LawyerViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        methods=["PUT"],
-        request_body=ExperienceSerializer,
+        methods=["GET"],
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["put"], detail=True)
+    @action(methods=["GET"], detail=True)
     def get_experience(self, request):
         # user = await get_object_or_404(get_user_model(), pk=pk)
         user = request.user
