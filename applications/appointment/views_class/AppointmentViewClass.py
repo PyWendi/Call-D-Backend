@@ -1,6 +1,6 @@
 from .commonImport import *
 from ..serialisers_class.AppointmentSerializerClass import AppointmentSerializer
-from ..models import Appointment
+from ..models import Appointment, Notification
 from applications.authentication.models import Speciality
 
 
@@ -11,7 +11,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        methods=["POST"],
         request_body=AppointmentSerializer,
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
@@ -34,6 +33,12 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         """
         Part of notification
         """
+        Notification.objects.create(
+            author=request.user.id,
+            receiver=lawyer,
+            type="demande",
+            appointment_id=appointment.id,
+        )
 
         serialiser = AppointmentSerializer(appointment, many=False)
         return Response(serialiser.data, status=status.HTTP_201_CREATED)
@@ -53,6 +58,12 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         """
         Part for sending notification
         """
+        Notification.objects.create(
+            author=request.user.id,
+            receiver=appointment.lawyer,
+            type="confirmation",
+            appointment_id=appointment.id,
+        )
 
         serializer = AppointmentSerializer(appointment, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -70,10 +81,15 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         """
         Part of notification 
         """
+        Notification.objects.create(
+            author=request.user.id,
+            receiver=appointment.lawyer,
+            type="annulation",
+            appointment_id=appointment.id,
+        )
 
     @swagger_auto_schema(
         methods=["GET"],
-        request_body=AppointmentSerializer,
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     @action(methods=["GET"], detail=True)

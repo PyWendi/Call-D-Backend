@@ -21,3 +21,7 @@ Dependency injection (facultative)
 
     b) LAWYER: Archive the rendez-vous *
        CLIENT: Give notice
+
+
+-- Router for appointment --
+-- Router for authentication --

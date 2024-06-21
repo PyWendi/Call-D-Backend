@@ -13,7 +13,7 @@ class Notification(models.Model):
     author = models.BigIntegerField(null=True)
     receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=TYPE_CHOICE)
-    appointment_id = models.BigIntegerField()
+    appointment_id = models.BigIntegerField(null=True)
     seen = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

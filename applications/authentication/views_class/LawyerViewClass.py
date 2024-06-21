@@ -79,3 +79,19 @@ class LawyerViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        methods=["PUT"],
+        request_body=ExperienceSerializer,
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["put"], detail=True)
+    def download_file(self, request, pk, *args, **kwargs):
+        user = get_object_or_404(get_user_model(), pk=request.user.id)
+        # Use FileResponse to serve the file
+        # The as_attachment=True parameter prompts the browser to download the file
+        # return FileResponse(uploaded_file.file.open(), as_attachment=True)
+        return Response({
+            "file_link": user.cv_file.url
+        })
+

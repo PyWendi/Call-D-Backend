@@ -33,7 +33,7 @@ class ClientSerialiser(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = "__all__"
+        # fields = "__all__"
         exclude = ["domains", "availability"]
 
     def create(self, validated_data):

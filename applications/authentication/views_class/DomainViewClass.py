@@ -16,12 +16,12 @@ class DomainViewSet(viewsets.ModelViewSet):
         }),
         # operation_summary="Les donnees envoyer dans le corps de la request (purchaseId) est utiliser pour creed des notification qui seront envoyer vers les administrateurs"
     )
-    @action(methods=["GET"], detail=False)
-    def get_speciality(self, request, *args, **kwargs):
+    @action(methods=["GET"], detail=True)
+    def get_speciality(self, request, pk, *args, **kwargs):
         """
         Retrieves all speciality linked for the authenticated user.
         This endpoint is intended for use in the user profile section.
         """
-        domain = Domain.objects.all()
-        domain_serializer = DomainSerializer(domain, many=True)
+        domain = Domain.objects.get(pk=pk)
+        domain_serializer = DomainSerializer(domain, many=False)
         return Response(domain_serializer.data, status=status.HTTP_200_OK)
