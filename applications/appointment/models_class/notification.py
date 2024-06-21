@@ -1,5 +1,6 @@
 from django.db import models
 from applications.authentication.models import CustomUser
+from .appointment import Appointment
 
 
 class Notification(models.Model):
@@ -13,9 +14,12 @@ class Notification(models.Model):
     author = models.BigIntegerField(null=True)
     receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=TYPE_CHOICE)
-    appointment_id = models.BigIntegerField(null=True)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True)
     seen = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.created_at
+        return str(self.created_at)
+
+    class Meta:
+        ordering = ["-created_at"]

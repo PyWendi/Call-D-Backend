@@ -13,6 +13,15 @@ class SpecialityViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        request_body=SpecialitySerializer,
+        responses={201: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    def create(self, request, *args, **kwargs):
+        domain = Domain.objects.get(pk=request.data.get("domain"))
+        speciality = Speciality.objects.create(domain=domain, name=request.data.get("name"))
+        serializer = self.serializer_class(speciality, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
         method="GET",

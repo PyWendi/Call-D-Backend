@@ -109,15 +109,13 @@ class LawyerViewSet(viewsets.ModelViewSet):
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     @action(methods=["GET"], detail=True)
-    def get_experience(self, request):
+    def get_experience(self, request, pk):
         # user = await get_object_or_404(get_user_model(), pk=pk)
-        user = request.user
+        user = get_object_or_404(get_user_model(), pk=pk)
         experience = user.experience_set.all()
 
         serializer = ExperienceSerializer(experience, many=True)
-        if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         methods=["PUT"],
@@ -134,3 +132,12 @@ class LawyerViewSet(viewsets.ModelViewSet):
             "file_link": user.cv_file.url
         })
 
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False)
+    def get_all_lawyer(self, request, *args, **kwargs):
+        lawyers = get_user_model().objects.filter(isClient=False)
+        serializer = LawyerSerialiser(lawyers)
+        return Response(serializer.data, status=status.HTTP_200_OK)

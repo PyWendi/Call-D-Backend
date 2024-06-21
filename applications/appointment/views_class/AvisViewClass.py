@@ -10,14 +10,12 @@ class AvisViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        # request_body=AvisSerializer,
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     def create(self, request, *args, **kwargs):
-        lawyerId = request.data.pop("lawyer")
-        lawyer = get_object_or_404(get_user_model(), pk=int(lawyerId))
+        lawyer = get_object_or_404(get_user_model(), pk=int(request.data.pop("lawyer")))
         data = request.data
-        avis = Avis.objects.create(lawyer=lawyerId, **data)
+        avis = Avis.objects.create(lawyer=lawyer, writer=request.user.id, **data)
         """
                 Part of notification 
                 """

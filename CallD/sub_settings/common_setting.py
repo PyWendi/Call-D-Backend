@@ -73,6 +73,10 @@ SWAGGER_SETTINGS = {
             'in': 'header'
         }
     },
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
+    'INSPECTORS': [
+            'drf_yasg.inspectors.view.DRFYASGViewInspector',
+    ],
 }
 
 

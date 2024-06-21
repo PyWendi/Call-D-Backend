@@ -27,6 +27,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             isConfirmed=False,
             isArchived=False,
             isValid=True,
+            client_id=request.user.id,
             **data
         )
         appointment.save()
@@ -40,40 +41,44 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             appointment_id=appointment.id,
         )
 
-        serialiser = AppointmentSerializer(appointment, many=False)
-        return Response(serialiser.data, status=status.HTTP_201_CREATED)
+        serializer = self.serializer_class(appointment, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
         methods=["PUT"],
-        request_body=AppointmentSerializer,
-        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+        # request_body=AppointmentSerializer,
+        responses={200: "OK", 400: "BAD reque   st", 500: "SERVER ERROR"}
     )
     @action(methods=["PUT"], detail=True)
     def validate_appointment(self, request, pk, *args, **kwargs):
+        """
+        Only require `date` and `message`
+        """
         date = request.data.get("date")
         appointment = get_object_or_404(Appointment, pk=pk)
+        appointment.message = request.data.get("message", "")
         appointment.date = date
         appointment.isConfirmed = True
         appointment.save()
         """
         Part for sending notification
+        Assuming the user is a lawyer.
         """
         Notification.objects.create(
             author=request.user.id,
-            receiver=appointment.lawyer,
+            receiver=get_user_model().objects.get(pk=appointment.client_id),
             type="confirmation",
             appointment_id=appointment.id,
         )
 
-        serializer = AppointmentSerializer(appointment, many=False)
+        serializer = self.serializer_class(appointment, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        methods=["PUT"],
-        request_body=AppointmentSerializer,
+        methods=["GET"],
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["PUT"], detail=True)
+    @action(methods=["GET"], detail=True)
     def cancel_appointment(self, request, pk, *args, **kwargs):
         appointment = get_object_or_404(Appointment, pk=pk)
         appointment.isValid = False
@@ -87,6 +92,8 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             type="annulation",
             appointment_id=appointment.id,
         )
+
+        return Response(status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         methods=["GET"],

@@ -1,5 +1,6 @@
 from .commonImport import *
 from ..serialisers_class.userSerializer import ClientSerialiser, ProfileImageSerializer, CvSerializer
+from ..models import Region
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -24,6 +25,36 @@ class ClientViewSet(viewsets.ModelViewSet):
         else:
             return [JWTAuthentication()]
         # return super(UserViewSet, self).get_authenticators()
+
+    @swagger_auto_schema(
+        request_body=ClientSerialiser,
+        responses={201: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    def create(self, request, *args, **kwargs):
+        region = Region.objects.get(pk=request.data.pop("region"))
+        password = make_password(request.data.pop("password"))
+        new_user = get_user_model().objects.create(**request.data, password=password, region=region)
+        new_user.isClient = True
+        new_user.save()
+        serializer = ClientSerialiser(new_user, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @swagger_auto_schema(
+        request_body=ClientSerialiser,
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    def update(self, request, pk, *args, **kwargs):
+        user = get_object_or_404(get_user_model(), pk=pk)
+        user.first_name = request.data.get("first_name")
+        user.last_name = request.data.get("last_name")
+        user.phone = request.data.get("phone")
+        user.email = request.data.get("email")
+        user.location = request.data.get("location")
+        user.region = Region.objects.get(pk=request.data.pop("region"))
+        user.save()
+        serializer = ClientSerialiser(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     @swagger_auto_schema(
         methods=["PUT"],
