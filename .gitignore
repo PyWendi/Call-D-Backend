@@ -83,6 +83,7 @@ celerybeat-schedule.*
 .env
 .common
 .venv
+.winvenv
 env/
 venv/
 ENV/
