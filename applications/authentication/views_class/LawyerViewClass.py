@@ -1,5 +1,5 @@
 from .commonImport import *
-from ..serialisers_class.userSerializer import LawyerSerialiser, ProfileImageSerializer, CvSerializer
+from ..serialisers_class.userSerializer import LawyerSerialiser, ShortLawyerSerializer, ProfileImageSerializer, CvSerializer
 from ..serialisers_class.experienceSerializer import ExperienceSerializer
 from django.contrib.auth.hashers import make_password
 from ..models import Domain, Region
@@ -140,5 +140,35 @@ class LawyerViewSet(viewsets.ModelViewSet):
     @action(methods=["GET"], detail=False)
     def get_all_lawyer(self, request, *args, **kwargs):
         lawyers = get_user_model().objects.filter(isClient=False)
-        serializer = LawyerSerialiser(lawyers)
+        serializer = ShortLawyerSerializer(lawyers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False, url_path="search/(?P<search>[a-zA-Z]+)")
+    def lookup(self, request, search=None):
+        """
+        _summary_
+        ```
+        #This API is used to search lawyer by their first_name which is inserted in the url
+        @request -> str:[a-zA-Z]+
+        ```
+        """
+        try:
+            if not search.isalpha():
+                return Response({
+                    "Error": "La recherche doit seulement contenir des carateres alphabetiques."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            lawyers = get_user_model().objects.filter(first_name__icontains=search, isClient=False)
+            # data = ShortLawyerSerializer(lawyers, many=True) if len(lawyers) > 0 else []
+            data = []
+            if len(lawyers) > 0:
+                serializer = ShortLawyerSerializer(lawyers, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "Error": str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)

@@ -48,7 +48,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         user.first_name = request.data.get("first_name")
         user.last_name = request.data.get("last_name")
         user.phone = request.data.get("phone")
-        user.email = request.data.get("email")
+        # user.email = request.data.get("email") Because unique
         user.location = request.data.get("location")
         user.region = Region.objects.get(pk=request.data.pop("region"))
         user.save()
@@ -63,7 +63,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     )
     @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser],
             serializer_class=ProfileImageSerializer)
-    async def update_profile_image(self, request, pk):
+    def update_profile_image(self, request, pk):
         # user = await get_object_or_404(get_user_model(), pk=pk)
         user = request.user
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
@@ -71,7 +71,6 @@ class ClientViewSet(viewsets.ModelViewSet):
 
         serializer = self.serializer_class(user, data=data)
         if serializer.is_valid():
-            await serializer.save()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

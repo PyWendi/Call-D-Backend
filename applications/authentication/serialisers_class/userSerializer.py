@@ -20,7 +20,7 @@ class LawyerSerialiser(serializers.ModelSerializer):
     class Meta:
         model = CustomUser()
         # fields = "__all__"
-        exclude =['groups', 'user_permissions']
+        exclude = ['groups', 'user_permissions']
 
     def create(self, validated_data):
         user = CustomUser().objects.create()
@@ -30,10 +30,11 @@ class LawyerSerialiser(serializers.ModelSerializer):
 
 class ShortLawyerSerializer(serializers.ModelSerializer):
     profile_img = serializers.ImageField(read_only=True)
+    domains = UserDomainSerializer(many=True)
 
     class Meta:
-        model = CustomUser()
-        fields = ['id', 'first_name', 'last_name', 'profile_img']
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'profile_img', 'domains']
 
 
 class ClientSerialiser(serializers.ModelSerializer):

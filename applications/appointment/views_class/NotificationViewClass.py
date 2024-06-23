@@ -33,3 +33,23 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False)
+    def count(self, request, *args, **kwargs):
+        return Response(
+            {"count": Notification.objects.filter(receiver=request.user, seen=False).count()},
+            status=status.HTTP_200_OK
+        )
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False)
+    def latest(self, request, *args, **kwargs):
+        notification = Notification.objects.filter(receiver=4).order_by("-created_at")[0:1:][0]
+        serializer = NotificationSerializer(notification, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
