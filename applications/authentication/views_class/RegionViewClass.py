@@ -6,5 +6,5 @@ from ..models import Region
 class RegionViewSet(viewsets.ModelViewSet):
     serializer_class = RegionSerializer
     queryset = Region.objects.all()
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
