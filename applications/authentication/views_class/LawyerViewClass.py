@@ -80,7 +80,7 @@ class LawyerViewSet(viewsets.ModelViewSet):
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
 
-        serializer = self.serializer_class(user, data=data)
+        serializer = ProfileImageSerializer(user, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -99,7 +99,7 @@ class LawyerViewSet(viewsets.ModelViewSet):
         cv_file = request.FILES.get("cv_file") if request.FILES.get("cv_file") else None
         data = {"cv_file": cv_file}
 
-        serializer = self.serializer_class(user, data=data)
+        serializer = CvSerializer(user, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

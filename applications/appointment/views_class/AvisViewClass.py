@@ -27,3 +27,18 @@ class AvisViewSet(viewsets.ModelViewSet):
 
         serializer = self.serializer_class(avis, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=True)
+    def for_lawyer(self, request, pk, *args, **kwargs):
+        lawyer = get_object_or_404(get_user_model(), pk=pk)
+        avis = Avis.objects.filter(lawyer=lawyer)
+
+        if len(avis) > 0:
+            serializer = AvisSerializer(avis, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else :
+            return Response(data=[], status=status.HTTP_200_OK)
