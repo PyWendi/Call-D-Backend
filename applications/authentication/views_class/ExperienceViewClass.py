@@ -45,3 +45,16 @@ class ExperienceViewSet(viewsets.ModelViewSet):
         serializer = ExperienceSerializer(experience, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=True)
+    def for_lawyer(self, request, pk, *args, **kwargs):
+        lawyer = get_object_or_404(get_user_model(), pk=pk)
+        experiences = Experience.objects.filter(owner=lawyer)
+        if len(experiences) > 0:
+            serializer = ExperienceSerializer(experiences, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(data=[], status=status.HTTP_200_OK)
+

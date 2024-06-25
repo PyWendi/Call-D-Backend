@@ -1,5 +1,10 @@
 from .commonImport import *
-from ..serialisers_class.userSerializer import LawyerSerialiser, ShortLawyerSerializer, ProfileImageSerializer, CvSerializer
+from ..serialisers_class.userSerializer import (
+    LawyerSerialiser,
+    ShortLawyerSerializer,
+    ProfileImageSerializer,
+    CvSerializer,
+    AvailabilitySerializer)
 from ..serialisers_class.experienceSerializer import ExperienceSerializer
 from django.contrib.auth.hashers import make_password
 from ..models import Domain, Region
@@ -72,10 +77,9 @@ class LawyerViewSet(viewsets.ModelViewSet):
         request_body=ProfileImageSerializer,
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser],
+    @action(methods=["put"], detail=False, parser_classes=[MultiPartParser, FormParser],
             serializer_class=ProfileImageSerializer)
-    def update_profile_image(self, request, pk):
-        # user = await get_object_or_404(get_user_model(), pk=pk)
+    def update_profile_image(self, request):
         user = request.user
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
@@ -91,15 +95,31 @@ class LawyerViewSet(viewsets.ModelViewSet):
         request_body=CvSerializer,
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser],
+    @action(methods=["put"], detail=False, parser_classes=[MultiPartParser, FormParser],
             serializer_class=CvSerializer)
-    def upload_cv(self, request, pk):
-        # user = await get_object_or_404(get_user_model(), pk=pk)
+    def upload_cv(self, request):
         user = request.user
         cv_file = request.FILES.get("cv_file") if request.FILES.get("cv_file") else None
         data = {"cv_file": cv_file}
 
         serializer = CvSerializer(user, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        methods=["PUT"],
+        request_body=AvailabilitySerializer,
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["put"], detail=False, parser_classes=[MultiPartParser, FormParser],
+            serializer_class=ProfileImageSerializer)
+    def update_availability(self, request):
+        user = request.user
+        availability = request.data.get("availability")
+        data = {"availability": availability}
+        serializer = AvailabilitySerializer(user, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

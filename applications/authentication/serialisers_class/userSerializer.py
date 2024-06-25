@@ -36,6 +36,10 @@ class ShortLawyerSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'profile_img', 'domains']
 
+class AvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['availability']
 
 class ClientSerialiser(serializers.ModelSerializer):
     profile_img = serializers.ImageField(read_only=True)

@@ -105,3 +105,32 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         appointment.isArchived = True
         appointment.save()
         return Response(status=status.HTTP_200_OK)
+
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False, url_path="for/lawyer")
+    def getAppointmentForLawyer(self, request):
+        appointments = Appointment.objects.filter(lawyer=request.user)
+
+        if len(appointments) > 0:
+            serializer = AppointmentSerializer(appointments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(data=[], status=status.HTTP_200_OK)
+
+
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False, url_path="for/client")
+    def getAppointmentForClient(self, request):
+        appointments = Appointment.objects.filter(client_id=request.user.pk)
+
+        if len(appointments) > 0:
+            serializer = AppointmentSerializer(appointments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(data=[], status=status.HTTP_200_OK)
