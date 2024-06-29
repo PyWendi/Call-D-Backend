@@ -11,7 +11,7 @@ load_dotenv(str(ENV_FILE_PATH))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150"]
 
 INSTALLED_APPS = [
     'daphne',

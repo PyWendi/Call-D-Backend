@@ -15,7 +15,12 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = "__all__"
+        # fields = "__all__"
+        fields = [
+            "title", "description", "message", "date",
+            "isConfirmed", "isArchived", "isValid",
+            "speciality", "lawyer", "client", "client_id", "created_at"
+        ]
 
     def get_client(self, obj):
         clientId = obj.client_id

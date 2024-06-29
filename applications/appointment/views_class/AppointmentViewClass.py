@@ -106,29 +106,34 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         appointment.save()
         return Response(status=status.HTTP_200_OK)
 
-
     @swagger_auto_schema(
         methods=["GET"],
-        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+        responses={200: AppointmentSerializer, 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["GET"], detail=False, url_path="for/lawyer")
-    def getAppointmentForLawyer(self, request):
-        appointments = Appointment.objects.filter(lawyer=request.user)
+    @action(methods=["GET"], detail=False, url_path="for/client")
+    def getAppointmentForClient(self, request):
+        appointments = []
+        if request.user.isClient:
+            appointments = Appointment.objects.filter(client_id=request.user.pk, isArchived=False)
+        else:
+            appointments = Appointment.objects.filter(lawyer=request.user, isArchived=False)
 
         if len(appointments) > 0:
             serializer = AppointmentSerializer(appointments, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(data=[], status=status.HTTP_200_OK)
 
-
-
     @swagger_auto_schema(
         methods=["GET"],
-        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+        responses={200: AppointmentSerializer, 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["GET"], detail=False, url_path="for/client")
-    def getAppointmentForClient(self, request):
-        appointments = Appointment.objects.filter(client_id=request.user.pk)
+    @action(methods=["GET"], detail=False, url_path="archived/for/client")
+    def getArchivedAppointmentForClient(self, request):
+        appointments = []
+        if request.user.isClient:
+            appointments = Appointment.objects.filter(client_id=request.user.pk, isArchived=True)
+        else:
+            appointments = Appointment.objects.filter(lawyer=request.user, isArchived=True)
 
         if len(appointments) > 0:
             serializer = AppointmentSerializer(appointments, many=True)
