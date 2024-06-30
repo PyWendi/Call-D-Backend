@@ -34,7 +34,7 @@ class ShortLawyerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'profile_img', 'domains']
+        fields = ['id', 'first_name', 'last_name', 'profile_img', 'domains', 'location', 'phone']
 
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:

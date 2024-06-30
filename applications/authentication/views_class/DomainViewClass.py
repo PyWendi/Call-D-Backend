@@ -6,8 +6,8 @@ from ..serialisers_class.domainSerializer import UserDomainSerializer, DomainSer
 class DomainViewSet(viewsets.ModelViewSet):
     serializer_class = UserDomainSerializer
     queryset = Domain.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         method="GET",

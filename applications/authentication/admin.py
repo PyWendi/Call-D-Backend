@@ -11,7 +11,7 @@ class CustomUserAdmin(UserAdmin):
     # Customize the fields displayed in the add/edit forms
     fieldsets = (
         ("Login element", {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'isClient', 'location', 'profile_img', 'cv_file', 'availability', 'region', 'domains')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'isClient', 'phone', 'location', 'profile_img', 'cv_file', 'availability', 'region', 'domains')}),
         # ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),

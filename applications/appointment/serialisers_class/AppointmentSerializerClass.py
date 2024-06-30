@@ -17,6 +17,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointment
         # fields = "__all__"
         fields = [
+            "id",
             "title", "description", "message", "date",
             "isConfirmed", "isArchived", "isValid",
             "speciality", "lawyer", "client", "client_id", "created_at"

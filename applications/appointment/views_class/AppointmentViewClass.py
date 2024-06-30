@@ -114,9 +114,9 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     def getAppointmentForClient(self, request):
         appointments = []
         if request.user.isClient:
-            appointments = Appointment.objects.filter(client_id=request.user.pk, isArchived=False)
+            appointments = Appointment.objects.filter(client_id=request.user.pk)
         else:
-            appointments = Appointment.objects.filter(lawyer=request.user, isArchived=False)
+            appointments = Appointment.objects.filter(lawyer=request.user)
 
         if len(appointments) > 0:
             serializer = AppointmentSerializer(appointments, many=True)
@@ -139,3 +139,63 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             serializer = AppointmentSerializer(appointments, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(data=[], status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False, url_path="search/(?P<search>[a-zA-Z]+)")
+    def lookup(self, request, search=None):
+        """
+        _summary_
+        ```
+        #This API is used to search lawyer by their first_name which is inserted in the url
+        @request -> str:[a-zA-Z]+
+        ```
+        """
+        try:
+            if not search.isalpha():
+                return Response({
+                    "Error": "La recherche doit seulement contenir des carateres alphabetiques."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            appointments = Appointment.objects.filter(title__icontains=search, isArchived=False)
+            # data = ShortLawyerSerializer(lawyers, many=True) if len(lawyers) > 0 else []
+            data = []
+            if len(appointments) > 0:
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "Error": str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False, url_path="search/archive/(?P<search>[a-zA-Z]+)")
+    def lookupArchived(self, request, search=None):
+        """
+        _summary_
+        ```
+        #This API is used to search lawyer by their first_name which is inserted in the url
+        @request -> str:[a-zA-Z]+
+        ```
+        """
+        try:
+            if not search.isalpha():
+                return Response({
+                    "Error": "La recherche doit seulement contenir des carateres alphabetiques."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            appointments = Appointment.objects.filter(title__icontains=search, isArchived=True)
+            # data = ShortLawyerSerializer(lawyers, many=True) if len(lawyers) > 0 else []
+            data = []
+            if len(appointments) > 0:
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "Error": str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
