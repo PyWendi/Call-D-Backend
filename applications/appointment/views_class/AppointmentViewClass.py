@@ -158,7 +158,11 @@ class AppointmentViewSet(viewsets.ModelViewSet):
                 return Response({
                     "Error": "La recherche doit seulement contenir des carateres alphabetiques."
                 }, status=status.HTTP_400_BAD_REQUEST)
-            appointments = Appointment.objects.filter(title__icontains=search, isArchived=False)
+            if request.user.isClient:
+                appointments = Appointment.objects.filter(title__icontains=search, client_id=request.user.pk, isArchived=False)
+            else:
+                appointments = Appointment.objects.filter(title__icontains=search, lawyer=request.user, isArchived=False)
+
             # data = ShortLawyerSerializer(lawyers, many=True) if len(lawyers) > 0 else []
             data = []
             if len(appointments) > 0:
@@ -188,7 +192,12 @@ class AppointmentViewSet(viewsets.ModelViewSet):
                 return Response({
                     "Error": "La recherche doit seulement contenir des carateres alphabetiques."
                 }, status=status.HTTP_400_BAD_REQUEST)
-            appointments = Appointment.objects.filter(title__icontains=search, isArchived=True)
+
+            if request.user.isClient:
+                appointments = Appointment.objects.filter(title__icontains=search, client_id=request.user.pk, isArchived=True)
+            else:
+                appointments = Appointment.objects.filter(title__icontains=search, lawyer=request.user, isArchived=True)
+
             # data = ShortLawyerSerializer(lawyers, many=True) if len(lawyers) > 0 else []
             data = []
             if len(appointments) > 0:

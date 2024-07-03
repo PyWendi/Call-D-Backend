@@ -59,7 +59,6 @@ class LawyerViewSet(viewsets.ModelViewSet):
         user.first_name = request.data.get("first_name")
         user.last_name = request.data.get("last_name")
         user.phone = request.data.get("phone")
-        user.email = request.data.get("email")
         user.location = request.data.get("location")
         user.availability = request.data.get("availability")
         user.region = Region.objects.get(pk=request.data.pop("region"))

@@ -44,6 +44,16 @@ class ClientViewSet(viewsets.ModelViewSet):
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     def update(self, request, pk, *args, **kwargs):
+        """
+        Data needed by client to update profile
+        ```
+        first_name (string)
+        last_name (string)
+        phone (string)
+        location (string)
+        region (number: id)
+        ```
+        """
         user = get_object_or_404(get_user_model(), pk=pk)
         user.first_name = request.data.get("first_name")
         user.last_name = request.data.get("last_name")
