@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
+import json
 
 # handle api controller
 from rest_framework.views import APIView

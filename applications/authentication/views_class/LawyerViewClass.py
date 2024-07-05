@@ -38,10 +38,12 @@ class LawyerViewSet(viewsets.ModelViewSet):
         responses={201: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     def create(self, request, *args, **kwargs):
+        av_data = '[' + ("[false,false,false,false,false,false,false,false,false,false],"*5) + "]"
+
         domains = Domain.objects.filter(id__in=request.data.pop("domains"))
         region = Region.objects.get(pk=request.data.pop("region"))
         password = make_password(request.data.pop("password"))
-        new_user = get_user_model().objects.create(**request.data, password=password, region=region)
+        new_user = get_user_model().objects.create(**request.data, password=password, region=region, availability=av_data)
         for domain in domains:
             new_user.domains.add(domain)
         new_user.save()
@@ -60,7 +62,7 @@ class LawyerViewSet(viewsets.ModelViewSet):
         user.last_name = request.data.get("last_name")
         user.phone = request.data.get("phone")
         user.location = request.data.get("location")
-        user.availability = request.data.get("availability")
+        # user.availability = request.data.get("availability")
         user.region = Region.objects.get(pk=request.data.pop("region"))
         user.domains.clear()
         domains = Domain.objects.filter(id__in=request.data.pop("domains"))
@@ -112,8 +114,7 @@ class LawyerViewSet(viewsets.ModelViewSet):
         request_body=AvailabilitySerializer,
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
-    @action(methods=["put"], detail=False, parser_classes=[MultiPartParser, FormParser],
-            serializer_class=ProfileImageSerializer)
+    @action(methods=["put"], detail=False, serializer_class=AvailabilitySerializer)
     def update_availability(self, request):
         user = request.user
         availability = request.data.get("availability")
@@ -123,6 +124,16 @@ class LawyerViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=True, serializer_class=AvailabilitySerializer)
+    def get_availability(self, request, pk):
+        user = get_object_or_404(get_user_model(), pk=pk)
+        serializer = AvailabilitySerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         methods=["GET"],

@@ -36,7 +36,7 @@ class ExperienceViewSet(viewsets.ModelViewSet):
         experience.title = request.data.get("title")
         experience.description = request.data.get("description")
         experience.date_beg = request.data.get("date_beg")
-        experience.date_end = request.data.get("date_end", request.data.get("date_beg"))
+        experience.date_end = request.data.get("date_end", None)
         experience.domain = domain
         experience.specialities.clear()
         for speciality in specialities:
