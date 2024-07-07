@@ -38,7 +38,7 @@ class LawyerViewSet(viewsets.ModelViewSet):
         responses={201: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     def create(self, request, *args, **kwargs):
-        av_data = '[' + ("[false,false,false,false,false,false,false,false,false,false],"*5) + "]"
+        av_data = '[' + ("[false,false,false,false,false,false,false,false,false,false],"*4) + "[false,false,false,false,false,false,false,false,false,false]" + "]"
 
         domains = Domain.objects.filter(id__in=request.data.pop("domains"))
         region = Region.objects.get(pk=request.data.pop("region"))

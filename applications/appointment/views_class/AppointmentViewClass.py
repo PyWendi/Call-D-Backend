@@ -15,6 +15,13 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
     )
     def create(self, request, *args, **kwargs):
+        """
+        This api expect the following data:
+        `lawyer: integer,`
+        `speciality: integer`,
+        `title: string`,
+        `description: string`
+        """
         data = request.data
         # appointment = Appointment
         lawyer = data.pop("lawyer")
